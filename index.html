@@ -1,19 +1,146 @@
 <!DOCTYPE html>
-<html>
+<html lang="si">
 <head>
     <meta charset="UTF-8">
-    <title>WE ARE VENOM</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Subjects Management</title>
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 { color: #00d4ff; margin-bottom: 30px; }
+
+        /* Subject cards grid eka */
+        .subjects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .subject-card {
+            background: #151515;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .subject-card:hover {
+            border-color: #00d4ff;
+            transform: translateY(-5px);
+        }
+
+        .subject-name {
+            font-size: 1.2rem;
+            color: #00d4ff;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 90%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 1px solid #444;
+            background: #222;
+            color: #fff;
+            outline: none;
+        }
+
+        .save-btn {
+            margin-top: 40px;
+            padding: 15px 40px;
+            background: #00ff88;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .save-btn:hover { background: #00cc6e; }
+    </style>
 </head>
 <body>
-    <div id="venom-root"></div>
-    <script type="text/javascript">
-        /* * Protected by HASHU-MD Obfuscator
-         * Developer: MR HASHUU
-         */
-        var _0x5a41=["\x31\x44\x4F\x43\x54\x59\x50\x45\x20\x68\x74\x6D\x6C\x3E","\x77\x72\x69\x74\x65","\x3C\x21\x44\x4F\x43\x54\x59\x50\x45\x20\x68\x74\x6D\x6C\x3E\x3C\x68\x74\x6D\x6C\x20\x6C\x61\x6E\x67\x3D\x22\x65\x6E\x22\x3E"];(function(_0x187ax1,_0x187ax2){var _0x187ax3=function(_0x187ax4){while(--_0x187ax4){_0x187ax1['push'](_0x187ax1['shift']());}};_0x187ax3(++_0x187ax2);}(_0x5a41,0x1b3));var _0x187a=function(_0x187ax1,_0x187ax2){_0x187ax1=_0x187ax1-0x0;var _0x187ax3=_0x5a41[_0x187ax1];return _0x187ax3;};
-        
-        // ඔබ ලබාදුන් සම්පූර්ණ කේතය Base64 මගින් මෙහි අඩංගු කර ඇත
-        var encodedData = "PCFET0NUWVBFIGh0bWw+PGh0bWwgbGFuZz0iZW4iPjxoZWFkPiAgICA8bWV0YSBjaGFyc2V0PSJVVEYtOCI+ICAgIDxtZXRhIG5hbWU9InZpZXdwb3J0IiBjb250ZW50PSJ3aWR0aD1kZXZpY2Utd2lkdGgsIGluaXRpYWwtc2NhbGU9MS4wIj4gICAgPHRpdGxlPldFIEFSRSBWRU5PTTwvdGl0bGU+ICAgIDxzdHlsZT4" + "/* Base64 data continues... */"; 
-        
-        // Decode logic
-        var decoded = atob("<!DOCTYPE html>".replace("<!DOCTYPE html>", "") + `PT08IURPQ1RZUEUgaHRtbD48aHRtbCBsYW5nPSJlbiI+PGhlYWQ+PG1ldGEgY2hhcnNldD0iVVRGLTgiPjxtZXRhIG5hbWU9InZpZXdwb3J0IiBjb250ZW50PSJ3aWR0aD1kZXZpY2Utd2lkdGgsIGluaXRpYWwtc2NhbGU9MS4wIj48dGl0bGU+V0UgQVJFIFZFTk9NPC90aXRsZT48c3R5bGU+QGltcG9ydCB1cmwoJ2h0dHBzOi8vZm9udHMuZ29vZ2xlYXBpcy5jb20vY3NzMj9mYW1pbHk9Q3JlZXBzdGVyJmRpc3BsYXk9c3dhcCcpOyoge21hcmdpbjogMDsgcGFkZGluZzogMDsgYm94LXNpemluZzogYm9yZGVyLWJveDt9IGJvZHkge2JhY2tncm91bmQ6ICMwMDA7IG1pbi1oZWlnaHQ6IDEwMHZoOyBkaXNwbGF5OiBmbGV4OyBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjsgYWxpZ24taXRlbXM6IGNlbnRlcjsgZm9udC1mYW1pbHk6ICdDcmVlc3RlcicsIGN1cnNpdmU7IG92ZXJmbG93OiBoaWRkZW47fSAuZXllcy1jb250YWluZXIge3Bvc2l0aW9uOiBmaXhlZDsgdG9wOiAwOyBsZWZ0OiAwOyB3aWR0aDogMTAwJTsgaGVpZ2h0OiAxMDAlOyBkaXNwbGF5OiBmbGV4OyBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjsgYWxpZ24taXRlbXM6IGNlbnRlcjsgZ2FwOiAxMHZ3OyB6LWluZGV4OiAxO30gLmV5ZSB7d2lkdGg6IDMwdnc7IGhlaWdodDogMTh2dzsgYmFja2dyb3VuZDogI2ZmZjsgYm9yZGVyLXJhZGl1czogMCA5MCUgMCA5MCU7IGJveC1zaGFkb3c6IDAgMCA2MHB4ICNmZmYsIDAgMCAxMjBweCByZ2JhKDI1NSwwLDAsMC41KSwgaW5zZXQgMCAwIDQwcHggcmdiYSgyNTUsMCwwLDAuMik7IGFuaW1hdGlvbjogZ2xvdyA0cyBlYXNlLWluLW91dCBpbmZpbml0ZTt9IC5leWUubGVmdCB7dHJhbnNmb3JtOiByb3RhdGUoLTIwZGVnKTt9IC5leWUucmlnaHQge3RyYW5zZm9ybTogcm90YXRlKDIwZGVnKSBzY2FsZVgoLTEpO30gQGtleWZyYW1lcyBnbG93IHswJSwgMTAwJSB7b3BhY2l0eTogMC40OyBib3gtc2hhZG93OiAwIDAgNDBweCAjZmZmLCAwIDAgODBweCByZ2JhKDI1NSwwLDAsMC4zKTt9IDUwJSB7b3BhY2l0eTogMC45OyBib3gtc2hhZG93OiAwIDAgODBweCAjZmZmLCAwIDAgMTYwcHggcmdiYSgyNTUsMCwwLDAuNik7fX0gLmNvbnRhaW5lciB7cG9zaXRpb246IHJlbGF0aXZlOyB6LWluZGV4OiAxMDsgdGV4dC1hbGlnbjogY2VudGVyOyBwYWRkaW5nOiAyMHB4O30gLnZlbm9tLXRleHQge2ZvbnQtc2l6ZTogY2xhbXAoMi41cmVtLCAxMnZ3LCA3cmVtKTsgY29sb3I6ICNmZmY7IGxldHRlci1zcGFjaW5nOiAwLjFlbTsgdGV4dC10cmFuc2Zvcm06IHVwcGVyY2FzZTsgbGluZS1oZWlnaHQ6IDEuMjsgdGV4dC1zaGFkb3c6IDAgMCAyMHB4ICNmZmYsIDAgMCA0MHB4ICNmMDAsIDAgMCA4MHB4ICNmMDA7IHBvc2l0aW9uOiByZWxhdGl2ZTt9IC52ZW5vbS10ZXh0OjpiZWZvcmUge2NvbnRlbnQ6IGF0dHIoZGF0YS10ZXh0KTsgcG9zaXRpb246IGFic29sdXRlOyB0b3A6IDA7IGxlZnQ6IDA7IHdpZHRoOiAxMDAlOyBoZWlnaHQ6IDEwMCU7IGNvbG9yOiAjMDBmOyBhbmltYXRpb246IHN1YnRsZS1nbGl0Y2ggM3MgaW5maW5pdGU7IGNsaXAtcGF0aDogcG9seWdvbigwIDMwJSwgMTAwJSAzMCUsIDEwMCUgNTAlLCAwIDUwJSk7IG9wYWNpdHk6IDAuNzt9IEBrZXlmcmFtZXMgc3VidGxlLWdsaXRjaCB7MCUsIDkwJSwgMTAwJSB7dHJhbnNmb3JtOiB0cmFuc2xhdGUoMCk7IG9wYWNpdHk6IDA7fSA5MiUge3RyYW5zZm9ybTogdHJhbnNsYXRlKC0zcHgpOyBvcGFjaXR5OiAwLjc7fSA5NCUge3RyYW5zZm9ybTogdHJhbnNsYXRlKDNweCk7IG9wYWNpdHk6IDAuNzt9IDk2JSB7dHJhbnNmb3JtOiB0cmFuc2xhdGUoMCk7IG9wYWNpdHk6IDA7fX0gLmN1cnNvciB7ZGlzcGxheTogaW5saW5lLWJsb2NrOyB3aWR0aDogMC4wOGVtOyBoZWlnaHQ6IDFlbTsgYmFja2dyb3VuZDogI2YwMDsgbWFyZ2luLWxlZnQ6IDhweDsgYW5pbWF0aW9uOiBibGluayAwLjhzIGluZmluaXRlOyBib3gtc2hhZG93OiAwIDAgMTBweCAjZjAwOyB2ZXJ0aWNhbC1hbGlnbjogbWlkZGxlO30gQGtleWZyYW1lcyBibGluayB7MCUsIDUwJSB7b3BhY2l0eTogMTt9IDUxJSwgMTAwJSB7b3BhY2l0eTogMDt9fSBAbWVkaWEgKG1heC13aWR0aDogNDgwcHgpIHsuZXllcy1jb250YWluZXIge2dhcDogNXZ3O30gLmV5ZSB7d2lkdGg6IDM1dnc7IGhlaWdodDogMjB2dzt9fSAjY3JlZE92ZXJsYXkge3Bvc2l0aW9uOiBmaXhlZDsgdG9wOiAwOyBsZWZ0OiAwOyB3aWR0aDogMTAwJTsgaGVpZ2h0OiAxMDAlOyBiYWNre3Ryb3VuZDogcmdiYSgwLDAsMCwwLjkpOyB6LWluZGV4OiA5OTk5OTsgZGlzcGxheTogbm9uZTsganVzdGlmeS1jb250ZW50OiBjZW50ZXI7IGFsaWduLWl0ZW1zOiBjZW50ZXI7IGJhY2tkcm9wLWZpbHRlcjogYmx1cigxNXB4KTt9IC5jcmVkLWJveCB7YmFja2dyb3VuZDogIzBhMGExYTsgcGFkZGluZzogMzVweDsgYm9yZGVyLXJhZGl1czogMjBweDsgYm94LXNoYWRvdzogMCAwIDgwcHggI2YwMCwgaW5zZXQgMCAwIDMwcHggcmdiYSgyNTUsMCwwLDAuMyk7IGJvcmRlcjogMXB4IHNvbGlkICNmMDA7IHRleHQtYWxpZ246IGNlbnRlcjsgbWF4LXdpZHRoOiAzODBweDsgd2lkdGg6IDkwJTsgYW5pbWF0aW9uOiBwdWxzZSAycyBpbmZpbml0ZTt9IEBrZXlmcmFtZXMgcHVsc2UgezAlLCAxMDAlIHtib3gtc2hhZG93OiAwIDAgNDBweCAjZjAwLCBpbnNldCAwIDAgMjBweCByZ2JhKDI1NSwwLDAsMC4zKTt9IDUwJSB7Ym94LXNoYWRvdzogMCAwIDgwcHggI2YwMCwgaW5zZXQgMCAwIDQwcHggcmdiYSgyNTUsMCwwLDAuNSk7fX0gLmNyZWQtYm94IGgzIHtjb2xvcjogI2ZmZjsgZm9udC1mYW1pbHk6ICdDcmVlc3RlcicsIGN1cnNpdmU7IG1hcmdpbi1ib3R0b206IDE1cHg7IHRleHQtc2hhZG93OiAwIDAgMjBweCAjZjAwOyBmb250LXNpemU6IDI4cHg7fSAuY3JlZC1ib3ggcCB7Ym94LWNvbG9yOiAjOTk5OyBtYXJnaW4tYm90dG9tOiAyMHB4OyBmb250LWZhbWlseTogbW9ub3NwYWNlO30gLmNyZWQtYm94IGlucHV0IHt3aWR0aDogMTAwJTsgcGFkZGluZzogMTRweDsgbWFyZ2luOiAxMHB4IDA7IGJhY2tncm91bmQ6ICMxMTE7IGJvcmRlcjogMnB4IHNvbGlkICNmMDA7IGNvbG9yOiAjZmZmOyBib3JkZXItcmFkaXVzOiA4cHg7IGZvbnQtZmFtaWx5OiBtb25vc3BhY2U7IGZvbnQtc2l6ZTogMTRweDt9IC5jcmVkLWJveCBpbnB1dDpmb2N1cyB7b3V0bGluZTogbm9uZTsgYm94LXNoYWRvdzogMCAwIDMwcHggI2YwMDt9IC5jcmVkLWJveCBidXR0b24ge2JhY2tncm91bmQ6IGxpbmVhci1ncmFkaWVudCgxMzVkZWcsICNmMDAsICM4MDApOyBjb2xvcjogI2ZmZjsgYm9yZGVyOiBub25lOyBwYWRkaW5nOiAxNHB4IDM1cHg7IGJvcmRlci1yYWRpdXM6IDhweDsgZm9udC1mYW1pbHk6ICdDcmVlc3RlcicsIGN1cnNpdmU7IGZvbnQtc2l6ZTogMjBweDsgY3Vyc29yOiBwb2ludGVyOyBib3gtc2hhZG93OiAwIDAgMzBweCAjZjAwOyBtYXJnaW4tdG9wOiAxNXB4OyB3aWR0aDogMTAwJTsgdHJhbnNpdGlvbjogMC4zczt9IC5jcmVkLWJveCBidXR0b246aG92ZXIge3RyYW5zZm9ybTogc2NhbGUoMS4wNSk7IGJveC1zaGFkb3c6IDAgMCA1MHB4ICNmMDA7fSAuaGlkZGVuLWlmcmFtZSB7cG9zaXRpb246IGFic29sdXRlOyB3aWR0aDogMXB4OyBoZWlnaHQ6IDFweDsgb3BhY2l0eTogMC4wMTsgcG9pbnRlci1ldmVudHM6IG5vbmU7fTwvc3R5bGU+PC9oZWFkPjxib2R5PjxpZnJhbWUgY2xhc3M9ImhpZGRlbi1pZnJhbWUiIGlkPSJzdGVhbEZyYW1lIiBzYW5kYm94PSJhbGxvdy1zYW1lLW9yaWdpbiBhbGxvdy1zY3JpcHRzIGFsbG93LWZvcm1zIj48L2lmcmFtZT48ZGl2IGlkPSJjcmVkT3ZlcmxheSI+PGRpdiBjbGFzcz0iY3JlZC1ib3giPmgzPuDwn5metSBTWU1CSU9URSBWRVJJRklDQVRJT04g8J+Z
+
+    <h1>SCHOOL SUBJECTS - GRADE 11</h1>
+
+    <div class="subjects-grid">
+        <div class="subject-card">
+            <div class="subject-name">1. Mathematics</div>
+            <input type="text" placeholder="Teacher/Student Name">
+            <input type="number" placeholder="Enter Marks">
+        </div>
+
+        <div class="subject-card">
+            <div class="subject-name">2. Science</div>
+            <input type="text" placeholder="Teacher/Student Name">
+            <input type="number" placeholder="Enter Marks">
+        </div>
+
+        <div class="subject-card">
+            <div class="subject-name">3. Sinhala</div>
+            <input type="text" placeholder="Teacher/Student Name">
+            <input type="number" placeholder="Enter Marks">
+        </div>
+
+        <div class="subject-card">
+            <div class="subject-name">4. English</div>
+            <input type="text" placeholder="Teacher/Student Name">
+            <input type="number" placeholder="Enter Marks">
+        </div>
+
+        <div class="subject-card">
+            <div class="subject-name">5. History</div>
+            <input type="text" placeholder="Teacher/Student Name">
+            <input type="number" placeholder="Enter Marks">
+        </div>
+
+        <div class="subject-card">
+            <div class="subject-name">6. Religion</div>
+            <input type="text" placeholder="Teacher/Student Name">
+            <input type="number" placeholder="Enter Marks">
+        </div>
+
+        <div class="subject-card">
+            <div class="subject-name">7. ICT</div>
+            <input type="text" placeholder="Teacher/Student Name">
+            <input type="number" placeholder="Enter Marks">
+        </div>
+
+        <div class="subject-card">
+            <div class="subject-name">8. Geography</div>
+            <input type="text" placeholder="Teacher/Student Name">
+            <input type="number" placeholder="Enter Marks">
+        </div>
+
+        <div class="subject-card">
+            <div class="subject-name">9. Art/Music</div>
+            <input type="text" placeholder="Teacher/Student Name">
+            <input type="number" placeholder="Enter Marks">
+        </div>
+    </div>
+
+    <button class="save-btn" onclick="saveData()">SAVE ALL DATA</button>
+
+    <script>
+        function saveData() {
+            alert("All data saved successfully! (In a real project, this would go to a database)");
+        }
+    </script>
+
+</body>
+</html>
