@@ -3,19 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub Instant Deployer</title>
+    <title>GitHub Instant Deployer - Fixed</title>
     <style>
         body { font-family: 'Poppins', sans-serif; background: #0d1117; color: white; display: flex; flex-direction: column; align-items: center; padding: 20px; }
         .host-card { background: #161b22; border: 1px solid #30363d; padding: 30px; border-radius: 15px; width: 100%; max-width: 600px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
-        h1 { color: #58a6ff; text-align: center; }
-        label { display: block; margin-bottom: 5px; color: #8b949e; font-size: 14px; }
+        h1 { color: #58a6ff; text-align: center; font-size: 24px; }
+        label { display: block; margin-bottom: 5px; font-size: 14px; color: #8b949e; }
         input, textarea { width: 100%; background: #010409; color: #c9d1d9; border: 1px solid #30363d; border-radius: 8px; padding: 12px; margin-bottom: 15px; box-sizing: border-box; outline: none; }
-        textarea { height: 180px; font-family: monospace; }
+        textarea { height: 150px; font-family: monospace; }
         .btn-deploy { background: #238636; color: white; border: none; padding: 15px; font-weight: bold; border-radius: 8px; cursor: pointer; width: 100%; transition: 0.3s; }
         .btn-deploy:hover { background: #2ea043; }
-        #status { margin-top: 15px; text-align: center; font-size: 14px; }
         #urlDisplay { margin-top: 20px; padding: 15px; background: rgba(88, 166, 255, 0.1); border: 1px solid #58a6ff; border-radius: 8px; display: none; }
-        a { color: #58a6ff; word-break: break-all; }
+        #status { margin-top: 10px; font-size: 13px; text-align: center; }
     </style>
 </head>
 <body>
@@ -23,62 +22,60 @@
 <div class="host-card">
     <h1>🐙 GitHub Deployer</h1>
     
-    <label>GitHub Personal Access Token (Classic):</label>
-    <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxx">
-
+    <label>GitHub Personal Access Token:</label>
+    <input type="password" id="ghToken" placeholder="ghp_ ඔබේ Token එක මෙතනට දාන්න">
+    
     <label>Project Name (File Name):</label>
     <input type="text" id="fileName" placeholder="index">
 
     <label>HTML Code:</label>
     <textarea id="sourceCode" placeholder="<html><body><h1>Hello World!</h1></body></html>"></textarea>
 
-    <button class="btn-deploy" id="deployBtn" onclick="deployToGitHub()">GitHub එකට Deploy කරන්න 🚀</button>
-    
+    <button class="btn-deploy" id="deployBtn" onclick="deployToGitHub()">Deploy කරන්න 🚀</button>
     <div id="status"></div>
 
     <div id="urlDisplay">
         <p>✅ සාර්ථකව Upload විය!</p>
-        <p>URL: <a id="siteLink" href="#" target="_blank"></a></p>
-        <small style="color: #8b949e;">සටහන: සජීවී වීමට විනාඩි 1-2ක් ගතවිය හැක.</small>
+        <p>URL: <a id="siteLink" href="#" target="_blank" style="color: #58a6ff;"></a></p>
     </div>
 </div>
 
 <script>
     async function deployToGitHub() {
         const token = document.getElementById('ghToken').value.trim();
-        const username = "HASHU-MD"; // ඔබේ GitHub Username එක
-        const repo = "HASHU-WEB";   // ඔබේ Repository නම
-        
-        let fileName = document.getElementById('fileName').value.trim().toLowerCase();
-        const code = document.getElementById('sourceCode').value;
+        const username = "HASHU-MD"; 
+        const repo = "HASHU-WEB"; 
         const btn = document.getElementById('deployBtn');
         const status = document.getElementById('status');
+        
+        let fileName = document.getElementById('fileName').value.trim().replace(/\s+/g, '-').toLowerCase();
+        const code = document.getElementById('sourceCode').value;
 
         if(!token || !fileName || !code) return alert("කරුණාකර සියලු විස්තර පුරවන්න!");
         if(!fileName.endsWith('.html')) fileName += ".html";
 
         btn.disabled = true;
         btn.innerText = "Processing...";
-        status.innerText = "GitHub සමඟ සම්බන්ධ වෙමින්...";
+        status.innerText = "පරීක්ෂා කරමින් පවතී...";
 
         const url = `https://api.github.com/repos/${username}/${repo}/contents/${fileName}`;
 
         try {
-            // 1. කලින් file එකක් තිබේදැයි පරීක්ෂා කර SHA අගය ලබා ගැනීම
-            let sha = "";
-            const checkRes = await fetch(url, {
+            // 1. කලින් file එකක් තියෙනවාද බලලා SHA එක ගන්න (Update කරන්න ඕන නිසා)
+            let sha = null;
+            const checkFile = await fetch(url, {
                 headers: { "Authorization": `token ${token}` }
             });
-            
-            if(checkRes.ok) {
-                const data = await checkRes.json();
-                sha = data.sha;
+
+            if (checkFile.ok) {
+                const fileData = await checkFile.json();
+                sha = fileData.sha;
             }
 
-            // 2. Base64 encoding (Unicode සහාය ඇතිව)
-            const content = btoa(unescape(encodeURIComponent(code)));
+            // 2. Base64 Encode (UTF-8 support සහිතව)
+            const base64Content = btoa(unescape(encodeURIComponent(code)));
 
-            // 3. GitHub API හරහා Upload කිරීම
+            // 3. GitHub API එකට යැවීම
             const response = await fetch(url, {
                 method: "PUT",
                 headers: {
@@ -86,30 +83,34 @@
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    message: `Deploying ${fileName} via Web Tool`,
-                    content: content,
-                    sha: sha !== "" ? sha : undefined
+                    message: `Update/Create ${fileName} via Web Deployer`,
+                    content: base64Content,
+                    sha: sha // පරණ file එකක් තියෙනවා නම් ඒක replace කරන්න ඕනෙ නිසා
                 })
             });
 
-            if(response.ok) {
+            const result = await response.json();
+
+            if (response.ok) {
                 const finalURL = `https://${username}.github.io/${repo}/${fileName}`;
                 document.getElementById('siteLink').href = finalURL;
                 document.getElementById('siteLink').innerText = finalURL;
                 document.getElementById('urlDisplay').style.display = "block";
                 status.innerText = "✅ සාර්ථකයි!";
-                alert("වැඩේ හරි! GitHub වෙත සාර්ථකව Upload වුණා.");
+                alert("වැඩේ හරි! GitHub එකට Upload වුණා.");
             } else {
-                const err = await response.json();
-                status.innerText = "❌ වැරැද්දක්: " + err.message;
-                alert("Error: " + err.message);
+                console.error(result);
+                status.innerText = "❌ වැරැද්ද: " + result.message;
+                alert("ගැටලුවක් ආවා: " + result.message);
             }
+
         } catch (error) {
-            status.innerText = "❌ Connection Error!";
+            console.error(error);
+            status.innerText = "❌ Connection Error එකක්!";
             alert("Error: " + error.message);
         } finally {
             btn.disabled = false;
-            btn.innerText = "GitHub එකට Deploy කරන්න 🚀";
+            btn.innerText = "Deploy කරන්න 🚀";
         }
     }
 </script>
